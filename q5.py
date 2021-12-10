@@ -1,6 +1,7 @@
 import cv2
 import keyboard
 import numpy as np
+import matplotlib.pyplot as plt
 
 camera=cv2.VideoCapture(0)
 camera.set(3,640)
@@ -19,7 +20,11 @@ while True:
 
     gray_frame=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
     x,y=gray_frame.shape
-    frame_rectangle=gray_frame[(y//2)-100:(y//2),x//2:(x//2)+100]
+    lookUpTable = np.empty((1,256), np.uint8)
+    for i in range(256):
+        lookUpTable[0,i] = np.clip(pow(i / 255.0, 0.67 ) * 255.0, 0, 255)
+    res = cv2.LUT(gray_frame, lookUpTable)
+    frame_rectangle=res[(y//2)-100:(y//2),x//2:(x//2)+100]
     for i in range(len(frame_rectangle)):
         for j in range(len(frame_rectangle[i])):
             if frame_rectangle[i,j]>200:
